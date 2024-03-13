@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>CookingRecipes</title>
+    </head>
+    <body>
+
+    <h1>Create recipe</h1>
+
+    <form method="POST" action="/create">
+
+        <label for="name">Name :</label>
+        <input type="name" placeholder="Name of recipe">
+
+        <label for="description">Description :</label>
+        <input type="description" placeholder="Your description">
+
+        <label for="image">Upload your image :</label>
+        <input type="file" name="image" >
+
+        <button>Login</button>
+    </form>
+
+    <!-- If user not exist in database, registration -->
+    <a href="http://127.0.0.1:5000/registration" target="_blank">Inscription</a>
+        
+
+    </body>
+</html>

@@ -18,8 +18,8 @@ def login_post():
         #flash('Please ...')
 
     #Retrive username and password from form
-    username = "username" #request.form.get('username')
-    password = "password" #request.form.get('password')
+    username = request.form.get('username')
+    password = request.form.get('password')
     return redirect(url_for('recipes'))#, {escape(username)}
 
 

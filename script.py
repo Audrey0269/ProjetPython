@@ -3,7 +3,6 @@ from markupsafe import escape
 from pathlib import Path
 
 import sqlite3
-import os
 
 app = Flask(__name__)
 
@@ -82,10 +81,19 @@ def registration():
 
 @app.route('/registration', methods=['POST'])
 def registration_post():
-    #Retrive values from form
-    username = "username" #request.form.get('username')
-    password = "password" #request.form.get('password')
-    email = "email@email.fr" #request.form.get('email')
+   
+    username = request.form.get('username')
+    password = request.form.get('password')
+    email = request.form.get('email')
+
+    #Create cursor to database
+    cur = get_db().cursor()
+    #Request to have all recipes
+    cur.execute('INSERT INTO users (username, password, email) VALUES (?, ?, ?)', (username, password, email))
+    get_db().commit()
+    #close cursor
+    cur.close()
+
     return redirect(url_for('login'))#, {escape(username)}
 
 
@@ -99,21 +107,18 @@ def cooking_recipes_post():
 
     name = request.form.get('name')
     description = request.form.get('description')
-    #image = request.form.get('image')
-    image_file = request.files['image']
+    image = request.form.get('image')
 
-    image_path = os.path.join('static', 'images', image_file.filename)
-    image_file.save(image_path)
-
-     #Create cursor to database
+    #Create cursor to database
     cur = get_db().cursor()
     #Request to have all recipes
-    cur.execute('INSERT INTO recipes (name, description, image) VALUES (?, ?, ?)', (name, description, image_path))
+    cur.execute('INSERT INTO recipes (name, description, image) VALUES (?, ?, ?)', (name, description, image))
     get_db().commit()
     #close cursor
     cur.close()
 
-    return redirect(url_for('home'))#, {escape(username)}
+    return redirect(url_for('home'))    #, {escape(username)}
+
 
 
 

@@ -11,7 +11,8 @@
     <form method="POST" action="/registration">
 
         <label for="username">User name :</label>
-        <input type="username" placeholder="Your username">
+        <input type="text" name="username" placeholder="Username">
+        <!-- value="{{ request.form['title'] }} -->
 
         <label for="password">Password :</label>
         <input type="password" placeholder="Your password">
@@ -21,7 +22,7 @@
 
         <button>Registration</button>
     </form>
-        
+    
 
     </body>
 </html>

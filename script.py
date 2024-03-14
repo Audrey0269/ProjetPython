@@ -1,6 +1,6 @@
-from flask import Flask, render_template, redirect, url_for, request
+from flask import Flask, render_template, redirect, url_for, request, g
 from markupsafe import escape
-from flask import g
+from pathlib import Path
 
 import sqlite3
 
@@ -56,13 +56,16 @@ def login():
 
 @app.route('/login', methods=['POST', 'GET'])
 def login_post():
+    cur = get_db().cursor()
+    cur.execute('SELECT username FROM users WHERE =')
 
-#     #Check if user exist in database
-#     #user = User.query.filter_by(email=email).first()
-#     #if not user:
-#         #flash('Please ...')
+
+    #Check if user exist in database
     username = request.form.get('username')
     password = request.form.get('password')
+    if username != "Audrey" and password !=123456:
+        return "invalid ID or MDP !"
+    
     return redirect(url_for('home'))#, {escape(username)}
 
 #pour page de connexion faire : requete SELECT quand user = et password = 
@@ -113,10 +116,15 @@ def logout():
 #__________________________DATABASE__________________________
 
 # IF DATABASE NOT EXIST
-if DATABASE is None:
+if not Path('database.db').exists():
     with app.app_context():
         db = get_db()
         with app.open_resource('schema.sql', mode='r') as f:
             db.cursor().executescript(f.read())
         db.commit()
 
+
+
+
+# Pour lire le fichier SQL
+# Path('schema.sql').read_text()

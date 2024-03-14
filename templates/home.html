@@ -11,13 +11,26 @@
             <li><a href="http://127.0.0.1:5000/login">Login</a></li>
             <li><a href="http://127.0.0.1:5000/registration">Inscription</a></li>
             <li><a href="http://127.0.0.1:5000/logout">Déconnexion</a></li>
+            <li><a href="http://127.0.0.1:5000/createRecipe">Créer une nouvelle recette</a></li>
+            
+
         </ul>
          
 
         <h1>Recipes</h1>
 
+        <ul>
+            {% for recipe in recipes %}
+                <li>{{ recipe['name'] }}</li>
+                <li>{{ recipe['description'] }}</li>
+                <li><img src="{{ url_for('static', filename='images/' + recipe['image']) }}" alt="Recipe Image"></li>
+            {% endfor %}
+        </ul>
     
     </body>
 </html>
+
+
+
 
 

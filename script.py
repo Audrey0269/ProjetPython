@@ -3,6 +3,7 @@ from markupsafe import escape
 from pathlib import Path
 
 import sqlite3
+import os
 
 app = Flask(__name__)
 
@@ -30,24 +31,16 @@ def close_connection(exception):
 #HOME PAGE
 @app.route('/')
 def home():
-    #Create cursur to SQL
+    #Create cursor to database
     cur = get_db().cursor()
-    cur.execute('SELECT * FROM recipes')
+    #Request to have all recipes
+    cur.execute('SELECT * FROM recipes;')
+    #Recover all recipes
+    recipes = cur.fetchall()
+    #close cursor
+    cur.close()
+    return render_template('home.html', recipes=recipes)
 
-
-
-
-    # for user in query_db('select * from users'):
-    # print(user['username'], 'has the id', user['user_id'])
-
-     # rv = cur.fetchall()
-    # cur.close()
-
-    return render_template('home.html')
-
-
-
-#SELECT*FROM TABLE
 
 #LOGIN PAGE
 @app.route('/login')
@@ -56,15 +49,25 @@ def login():
 
 @app.route('/login', methods=['POST', 'GET'])
 def login_post():
-    cur = get_db().cursor()
-    cur.execute('SELECT username FROM users WHERE =')
 
-
-    #Check if user exist in database
+   
+     #Check if user exist in database
     username = request.form.get('username')
+    print(username)
+
     password = request.form.get('password')
-    if username != "Audrey" and password !=123456:
-        return "invalid ID or MDP !"
+    print(password)
+
+    # cur = get_db().cursor()
+    # cur.execute("SELECT * FROM users WHERE username=? AND password=?", (username, password))
+    # user = cur.fetchone() 
+
+    # if user is None:
+    #     raise ValueError("Identifiants invalides. Veuillez vérifier votre nom d'utilisateur et votre mot de passe.")
+
+    # if username != 'Audrey' and password !='123456':
+    #     error_username = "Nom d'utilisateur incorrect."
+        #raise ValueError("Identifiants invalides. Veuillez vérifier votre nom d'utilisateur et votre mot de passe.")
     
     return redirect(url_for('home'))#, {escape(username)}
 
@@ -91,12 +94,28 @@ def registration_post():
 def create_recipe():
     return render_template('createRecipe.html')
 
-# @app.route('/create_cooking_recipes', methods=['POST'])
-# def cooking_recipes_post():
-#     name = "name" #request.form.get('name')
-#     description = "descrciption" #request.form.get('description')
-#     image = "image" #request.form.get('image')
-#     return redirect(url_for('recipes'))#, {escape(username)}
+@app.route('/create_cooking_recipes', methods=['POST'])
+def cooking_recipes_post():
+
+    name = request.form.get('name')
+    description = request.form.get('description')
+    #image = request.form.get('image')
+    image_file = request.files['image']
+
+    image_path = os.path.join('static', 'images', image_file.filename)
+    image_file.save(image_path)
+
+     #Create cursor to database
+    cur = get_db().cursor()
+    #Request to have all recipes
+    cur.execute('INSERT INTO recipes (name, description, image) VALUES (?, ?, ?)', (name, description, image_path))
+    get_db().commit()
+    #close cursor
+    cur.close()
+
+    return redirect(url_for('home'))#, {escape(username)}
+
+
 
 
 #RECIPE PAGE

@@ -6,7 +6,6 @@ import sqlite3
 
 app = Flask(__name__)
 
-
 #______________________________DATABASE______________________________
 DATABASE = "database.db"
 
@@ -30,6 +29,14 @@ def close_connection(exception):
 #HOME PAGE
 @app.route('/')
 def home():
+    #Recover username from URL 
+    username = request.args.get('username')
+    #if username in URL
+    if username:
+        welcome_message = f'Bonjour {username} !'
+    else:
+        welcome_message = 'Bienvenu sur le site CookingRecipes'
+
     #Create cursor to database
     cur = get_db().cursor()
     #Request to have all recipes
@@ -38,14 +45,10 @@ def home():
     recipes = cur.fetchall()
     #close cursor
     cur.close()
-    return render_template('home.html', recipes=recipes)
+    return render_template('home.html', recipes=recipes, welcome_message=welcome_message)
 
 
 #LOGIN PAGE
-# @app.route('/login')
-# def login():
-#     return render_template('login.html')
-
 @app.route('/login', methods=['POST', 'GET'])
 def login_post():
     #Initializ variable error_message à None
@@ -64,14 +67,12 @@ def login_post():
 
         if user:
             #if username and password are in database
-            return redirect(url_for('home'))#, {escape(username)}
+            return redirect(url_for('home', username=username))#, {escape(username)}
         else:
             #if they aren't in database
             error_message = "Invalid username or password."
 
     return render_template('login.html', error_message=error_message)
-
-
 
 
 #REGISTRATION PAGE
@@ -88,9 +89,11 @@ def registration_post():
 
     #Create cursor to database
     cur = get_db().cursor()
+
     #Request to have all recipes
     cur.execute('INSERT INTO users (username, password, email) VALUES (?, ?, ?)', (username, password, email))
     get_db().commit()
+
     #close cursor
     cur.close()
 
@@ -111,9 +114,11 @@ def cooking_recipes_post():
 
     #Create cursor to database
     cur = get_db().cursor()
+
     #Request to have all recipes
     cur.execute('INSERT INTO recipes (name, description, image) VALUES (?, ?, ?)', (name, description, image))
     get_db().commit()
+
     #close cursor
     cur.close()
 
@@ -121,20 +126,17 @@ def cooking_recipes_post():
 
 
 
-
-
 #RECIPE PAGE
-# @app.route('/recipe')
-# def recipe():
-#     return render_template('recipe.html')
+@app.route('/recipe')
+def recipe():
+    return render_template('recipe.html')
                     
 
 
 #LOGOUT PAGE
 @app.route('/logout')
 def logout():
-    return redirect(url_for('login'))
-
+    return redirect(url_for('login_post'))
 
 
 #__________________________DATABASE__________________________
@@ -146,9 +148,3 @@ if not Path('database.db').exists():
         with app.open_resource('schema.sql', mode='r') as f:
             db.cursor().executescript(f.read())
         db.commit()
-
-
-
-
-# Pour lire le fichier SQL
-# Path('schema.sql').read_text()

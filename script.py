@@ -124,9 +124,9 @@ def cooking_recipes_post():
 
 
 #RECIPE PAGE
-@app.route('/recipe')
-def recipe():
-    return render_template('recipe.html')
+# @app.route('/recipe')
+# def recipe():
+#     return render_template('recipe.html')
                     
 
 

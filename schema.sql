@@ -4,7 +4,7 @@ DROP TABLE IF EXISTS recipes;
 
 -- __________CREATE____________
 CREATE TABLE users(
-    id INT PRIMARY KEY,
+    id INTEGER PRIMARY KEY,
     username TEXT NOT NULL,
     password TEXT NOT NULL,
     email TEXT UNIQUE

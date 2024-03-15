@@ -22,10 +22,11 @@
         <ul>
             {% for recipe in recipes %}
                 <li>{{ recipe['name'] }}</li>
-                <li>{{ recipe['description'] }}</li>
-                <li><img src="{{ url_for('static', filename='images/' + recipe['image']) }}" alt="Recipe Image"></li>
+                <p>{{ recipe['description'] }}</p>
+                <img src="{{ url_for('static', filename='images/' + recipe['image']) }}" alt="Recipe Image">
             {% endfor %}
         </ul>
+
     
     </body>
 </html>

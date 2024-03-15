@@ -2,6 +2,7 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>CookingRecipes</title>
     </head>
 
@@ -12,26 +13,16 @@
             <li><a href="http://127.0.0.1:5000/registration">Registration</a></li>
             <li><a href="http://127.0.0.1:5000/logout">Logout</a></li>
             <li><a href="http://127.0.0.1:5000/createRecipe">Create new recipe</a></li>
-            
+            <li><a href="http://127.0.0.1:5000/">Home</a></li>
 
         </ul>
-        
-        <h1>Recipes</h1>
+         
 
-        <h2>{{ welcome_message }}</h2>
+        <h1>{{ recipe.name }}</h1>
+        <p>Description: {{ recipe.description }}</p>
+        <img src="{{ url_for('static', filename='images/' + recipe['image']) }}" alt="Recipe Image">
 
-        {% for recipe in recipes %}
-            <h2><a href="{{ url_for('recipe_detail', recipe_id=recipe.id) }}">{{ recipe.name }}</a></h2>
-            <p>{{ recipe['description'] }}</p>
-            <img src="{{ url_for('static', filename='images/' + recipe['image']) }}" alt="Recipe Image">
-        {% endfor %}
-        
-
-    
     </body>
 </html>
-
-
-
 
 

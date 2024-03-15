@@ -127,9 +127,18 @@ def cooking_recipes_post():
 
 
 #RECIPE PAGE
-@app.route('/recipe')
-def recipe():
-    return render_template('recipe.html')
+@app.route('/recipe/<int:recipe_id>')
+def recipe_detail(recipe_id):
+    #Create cursor to database
+    cur = get_db().cursor()
+    #Request to have all recipes
+    cur.execute('SELECT * FROM recipes WHERE id = ?', (recipe_id,))
+    #Select recipe
+    recipe = cur.fetchone()
+    #close cursor
+    cur.close()
+
+    return render_template('recipeDetail.html', recipe=recipe)
                     
 
 

@@ -42,36 +42,36 @@ def home():
 
 
 #LOGIN PAGE
-@app.route('/login')
-def login():
-    return render_template('login.html')
+# @app.route('/login')
+# def login():
+#     return render_template('login.html')
 
 @app.route('/login', methods=['POST', 'GET'])
 def login_post():
+    #Initializ variable error_message à None
+    error_message = ''
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
 
-   
-     #Check if user exist in database
-    username = request.form.get('username')
-    print(username)
+        #Create cursor to database
+        cur = get_db().cursor()
 
-    password = request.form.get('password')
-    print(password)
+        #Check if username and password are in database
+        cur.execute('SELECT * FROM users WHERE username = ? AND password = ?' , (username, password))
+        user = cur.fetchone()
+        cur.close()
 
-    # cur = get_db().cursor()
-    # cur.execute("SELECT * FROM users WHERE username=? AND password=?", (username, password))
-    # user = cur.fetchone() 
+        if user:
+            #if username and password are in database
+            return redirect(url_for('home'))#, {escape(username)}
+        else:
+            #if they aren't in database
+            error_message = "Invalid username or password."
 
-    # if user is None:
-    #     raise ValueError("Identifiants invalides. Veuillez vérifier votre nom d'utilisateur et votre mot de passe.")
+    return render_template('login.html', error_message=error_message)
 
-    # if username != 'Audrey' and password !='123456':
-    #     error_username = "Nom d'utilisateur incorrect."
-        #raise ValueError("Identifiants invalides. Veuillez vérifier votre nom d'utilisateur et votre mot de passe.")
-    
-    return redirect(url_for('home'))#, {escape(username)}
 
-#pour page de connexion faire : requete SELECT quand user = et password = 
-#bien faire commit à chaque modification de la BDD 
 
 
 #REGISTRATION PAGE

@@ -3,6 +3,7 @@
     <head>
         <meta charset="UTF-8">
         <title>CookingRecipes</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     </head>
     <body>
 
@@ -11,10 +12,11 @@
         <form method="post" action="/login">
 
             <label for="username">Name :</label>
-            <input type="username" placeholder="Your username">
+            <input type="username" name="username" placeholder="Your username">
 
             <label for="password">Password :</label>
-            <input type="password" placeholder="Your password">
+            <input type="password" name="password" placeholder="Your password">
+            <p class="error-message">{{ error_message }}</p>
 
             <button>Login</button>
         </form>

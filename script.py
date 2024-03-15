@@ -1,15 +1,24 @@
 from flask import Flask, render_template, redirect, url_for, request, g
-from markupsafe import escape
 from pathlib import Path
+from werkzeug.utils import secure_filename
 
 import sqlite3
+import os
 
 app = Flask(__name__)
 
+#Path where image will save
+UPLOAD_FOLDER = 'static/images'
+
+#formats accepted
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+
+
 #______________________________DATABASE______________________________
+
 DATABASE = "database.db"
 
-# CONNEXION TO DATABASE (create empty database)
+# CONNECTION TO DATABASE (create empty database)
 def get_db():
     db = getattr(g, '_database', None)
     if db is None:
@@ -24,6 +33,7 @@ def close_connection(exception):
     if db is not None:
         db.close()
 
+
 #_______________________________APP___________________________
 
 #HOME PAGE
@@ -31,6 +41,7 @@ def close_connection(exception):
 def home():
     #Recover username from URL 
     username = request.args.get('username')
+
     #if username in URL
     if username:
         welcome_message = f'Bonjour {username} !'
@@ -39,19 +50,24 @@ def home():
 
     #Create cursor to database
     cur = get_db().cursor()
+
     #Request to have all recipes
     cur.execute('SELECT * FROM recipes;')
+
     #Recover all recipes
     recipes = cur.fetchall()
+
     #close cursor
     cur.close()
+
     return render_template('home.html', recipes=recipes, welcome_message=welcome_message)
 
 
 #LOGIN PAGE
 @app.route('/login', methods=['POST', 'GET'])
 def login_post():
-    #Initializ variable error_message à None
+
+    #Initialize variable error_message to None
     error_message = ''
     if request.method == 'POST':
         username = request.form.get('username')
@@ -65,11 +81,11 @@ def login_post():
         user = cur.fetchone()
         cur.close()
 
+        #if username and password are in database
         if user:
-            #if username and password are in database
-            return redirect(url_for('home', username=username))#, {escape(username)}
+            return redirect(url_for('home', username=username))
+        #if they aren't in database
         else:
-            #if they aren't in database
             error_message = "Invalid username or password."
 
     return render_template('login.html', error_message=error_message)
@@ -97,7 +113,7 @@ def registration_post():
     #close cursor
     cur.close()
 
-    return redirect(url_for('login'))#, {escape(username)}
+    return redirect(url_for('login_post'))#, {escape(username)}
 
 
 #CREATE RECIPE PAGE
@@ -105,36 +121,46 @@ def registration_post():
 def create_recipe():
     return render_template('createRecipe.html')
 
+
 @app.route('/create_cooking_recipes', methods=['POST'])
 def cooking_recipes_post():
 
     name = request.form.get('name')
     description = request.form.get('description')
-    image = request.form.get('image')
+    image = request.files['image']
 
-    #Create cursor to database
+    #Secure file names
+    filename = secure_filename(image.filename)
+
+    # Save image
+    image_path = os.path.join(UPLOAD_FOLDER, filename)
+    image.save(image_path)
+
+    #Path to image
+    image_path = os.path.join('', filename)
+
+    #Add recipe to database with image path
     cur = get_db().cursor()
-
-    #Request to have all recipes
-    cur.execute('INSERT INTO recipes (name, description, image) VALUES (?, ?, ?)', (name, description, image))
+    cur.execute('INSERT INTO recipes (name, description, image) VALUES (?, ?, ?)', (name, description, image_path))
     get_db().commit()
-
-    #close cursor
     cur.close()
 
-    return redirect(url_for('home'))    #, {escape(username)}
+    return redirect(url_for('home'))
 
 
-
-#RECIPE PAGE
+#DETAIL RECIPE PAGE
 @app.route('/recipe/<int:recipe_id>')
 def recipe_detail(recipe_id):
+
     #Create cursor to database
     cur = get_db().cursor()
+
     #Request to have all recipes
     cur.execute('SELECT * FROM recipes WHERE id = ?', (recipe_id,))
+
     #Select recipe
     recipe = cur.fetchone()
+
     #close cursor
     cur.close()
 

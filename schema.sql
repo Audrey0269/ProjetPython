@@ -11,7 +11,7 @@ CREATE TABLE users(
 );
 
 CREATE TABLE recipes(
-    id INT PRIMARY KEY,
+    id INTEGER PRIMARY KEY,
     name TEXT NOT NULL,
     description TEXT NOT NULL,
     image TEXT

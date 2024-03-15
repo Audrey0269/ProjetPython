@@ -7,7 +7,6 @@
     </head>
 
     <body>
-
         <ul>
             <li><a href="http://127.0.0.1:5000/login">Login</a></li>
             <li><a href="http://127.0.0.1:5000/registration">Registration</a></li>
@@ -17,11 +16,9 @@
 
         </ul>
          
-
         <h1>{{ recipe.name }}</h1>
         <p>Description: {{ recipe.description }}</p>
         <img src="{{ url_for('static', filename='images/' + recipe['image']) }}" alt="Recipe Image">
-
     </body>
 </html>
 

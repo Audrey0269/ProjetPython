@@ -6,28 +6,20 @@
     </head>
 
     <body>
-
         <ul>
             <li><a href="http://127.0.0.1:5000/login">Login</a></li>
             <li><a href="http://127.0.0.1:5000/registration">Registration</a></li>
             <li><a href="http://127.0.0.1:5000/logout">Logout</a></li>
             <li><a href="http://127.0.0.1:5000/createRecipe">Create new recipe</a></li>
-            
-
         </ul>
         
         <h1>Recipes</h1>
-
         <h2>{{ welcome_message }}</h2>
-
         {% for recipe in recipes %}
             <h2><a href="{{ url_for('recipe_detail', recipe_id=recipe.id) }}">{{ recipe.name }}</a></h2>
             <p>{{ recipe['description'] }}</p>
             <img src="{{ url_for('static', filename='images/' + recipe['image']) }}" alt="Recipe Image">
         {% endfor %}
-        
-
-    
     </body>
 </html>
 

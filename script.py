@@ -13,7 +13,6 @@ UPLOAD_FOLDER = 'static/images'
 #formats accepted
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
-
 #______________________________DATABASE______________________________
 
 DATABASE = "database.db"
@@ -67,18 +66,24 @@ def home():
 @app.route('/login', methods=['POST', 'GET'])
 def login_post():
 
-    #Initialize variable error_message to None
+    #Initialize variable error_message
     error_message = ''
+
     if request.method == 'POST':
+        #Recover form user data
         username = request.form.get('username')
         password = request.form.get('password')
 
         #Create cursor to database
         cur = get_db().cursor()
 
-        #Check if username and password are in database
+        #Request to have username and password to user in database
         cur.execute('SELECT * FROM users WHERE username = ? AND password = ?' , (username, password))
+
+        #Select a single result row from database
         user = cur.fetchone()
+
+        #close cursor
         cur.close()
 
         #if username and password are in database
@@ -99,6 +104,7 @@ def registration():
 @app.route('/registration', methods=['POST'])
 def registration_post():
    
+    #Recover form user data
     username = request.form.get('username')
     password = request.form.get('password')
     email = request.form.get('email')
@@ -106,8 +112,10 @@ def registration_post():
     #Create cursor to database
     cur = get_db().cursor()
 
-    #Request to have all recipes
+    #Request to insert user into the database
     cur.execute('INSERT INTO users (username, password, email) VALUES (?, ?, ?)', (username, password, email))
+
+    #Save changes to database
     get_db().commit()
 
     #close cursor
@@ -125,6 +133,7 @@ def create_recipe():
 @app.route('/create_cooking_recipes', methods=['POST'])
 def cooking_recipes_post():
 
+    #Recover form user data
     name = request.form.get('name')
     description = request.form.get('description')
     image = request.files['image']
@@ -141,8 +150,14 @@ def cooking_recipes_post():
 
     #Add recipe to database with image path
     cur = get_db().cursor()
+
+    #Request to insert recipe into the database
     cur.execute('INSERT INTO recipes (name, description, image) VALUES (?, ?, ?)', (name, description, image_path))
+
+    #Save changes to database
     get_db().commit()
+
+    #close cursor
     cur.close()
 
     return redirect(url_for('home'))
@@ -155,7 +170,7 @@ def recipe_detail(recipe_id):
     #Create cursor to database
     cur = get_db().cursor()
 
-    #Request to have all recipes
+    #Request to have the recipe linked to the id
     cur.execute('SELECT * FROM recipes WHERE id = ?', (recipe_id,))
 
     #Select recipe
@@ -166,7 +181,6 @@ def recipe_detail(recipe_id):
 
     return render_template('recipeDetail.html', recipe=recipe)
                     
-
 
 #LOGOUT PAGE
 @app.route('/logout')
